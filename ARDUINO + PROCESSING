@@ -1,0 +1,48 @@
+//ARDUINO
+int led = 13;
+int button = 12;
+void setup() {
+pinMode(led, OUTPUT);
+pinMode(button, INPUT);
+Serial.begin(9600);
+}
+void loop(){
+if(Serial.available() > 0) {
+char ledState = Serial.read();
+if(ledState == '1'){
+digitalWrite(led, HIGH);
+}
+if(ledState == '0'){
+digitalWrite(led, LOW);
+}
+}
+int buttonState = digitalRead(button);
+if ( buttonState == HIGH){
+Serial.println("BOTON PRECIONADO");
+delay(50);
+}
+}
+
+//PROCESSING
+import processing.serial.*;
+Serial myPort;
+String myText="";
+void setup(){
+size(300, 300);
+myPort = new Serial(this, "COM5", 9600);
+myPort.bufferUntil('n');
+}
+void serialEvent (Serial myPort){
+myText = myPort.readStringUntil('n');
+}
+void draw(){
+background(0,0,0);
+text(myText, 120, 120);
+myText="";
+if(mousePressed && (mouseButton == LEFT)){
+myPort.write('1');
+}
+if (mousePressed && (mouseButton == RIGHT)){
+myPort.write('0');
+}
+}
